@@ -9,9 +9,14 @@ class AuthDataProvider {
         "/api/requestOtp",
         data: body,
       );
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        throw Exception("Email is required");
+    } on DioException catch (e) { 
+        if (e.response?.statusCode == 400) {
+        final errorMessage = e.response?.data["error"] ?? "";
+        if (errorMessage.contains("Email is required")) {
+          throw Exception("Email can not be empty");
+        } else {
+          throw Exception("Email is not registered with us");
+        }  
       } else if (e.response?.statusCode == 500) {
         throw Exception("Try again later");
       } else {
